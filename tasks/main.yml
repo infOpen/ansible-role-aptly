@@ -1,2 +1,18 @@
 ---
-# tasks file for aptly
+
+# Tasks file for aptly
+
+- name : Import aptly GPG key
+  become : True
+  apt_key :
+    id : "{{ aptly_gpg_key }}"
+    keyserver : "{{ aptly_gpg_keyserver }}"
+    state : present
+
+- name : Install aptly repository
+  become : True
+  apt_repository :
+    repo : "{{ aptly_repository }}"
+    update_cache : True
+    state : present
+
