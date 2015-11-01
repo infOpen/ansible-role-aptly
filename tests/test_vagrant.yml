@@ -2,7 +2,7 @@
 
 # Tests for aptly role
 
-- hosts: all
-  remote_user: vagrant
-  roles:
+- hosts : all
+  remote_user : vagrant
+  roles :
     - .

@@ -2,6 +2,10 @@
 
 # Defaults file for aptly
 
+# Custom gpg key
+aptly_custom_gpg_key_file : False
+aptly_custom_gpg_key_id   : False
+
 # User settings
 aptly_user    : aptly
 aptly_group   : aptly
