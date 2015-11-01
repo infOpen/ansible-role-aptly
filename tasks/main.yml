@@ -38,3 +38,10 @@
     update_cache : True
     state : present
 
+- name : Generate configuration
+  become : True
+  become_user : "{{ aptly_user }}"
+  template :
+    src : "{{ role_path }}/templates/aptly.conf.j2"
+    dest : "{{ aptly_user_home }}/.aptly.conf"
+    mode : "0700"

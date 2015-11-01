@@ -1,0 +1,19 @@
+// {{ ansible_managed }}
+
+{
+  "rootDir": "{{ aptly_user_home }}",
+  "downloadConcurrency": {{ aptly_download_concurrency }},
+  "downloadSpeedLimit": {{ aptly_download_speed_limit }},
+  "architectures": [ {{ aptly_architectures | join(',') }} ],
+  "dependencyFollowSuggests": {{ aptly_dependency_follow_suggests | lower }},
+  "dependencyFollowRecommends": {{ aptly_dependency_follow_recommends | lower }},
+  "dependencyFollowAllVariants": {{ aptly_dependency_follow_all_variants | lower }},
+  "dependencyFollowSource": {{ aptly_dependency_follow_source | lower }},
+  "gpgDisableSign": {{ aptly_gpg_disable_sign | lower }},
+  "gpgDisableVerify": {{ aptly_gpg_disable_verify | lower }},
+  "downloadSourcePackages": {{ aptly_download_source_packages | lower }},
+  "ppaDistributorID": "{{ aptly_ppa_distributor_id }}",
+  "ppaCodename": "{{ aptly_ppa_codename }}",
+  "S3PublishEndpoints": {{ aptly_s3_publish_endpoints }},
+  "SwiftPublishEndpoints": {{ aptly_swift_publish_endpoints }}
+}
