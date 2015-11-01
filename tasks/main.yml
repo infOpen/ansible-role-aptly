@@ -16,3 +16,25 @@
     update_cache : True
     state : present
 
+- name : Create aptly user
+  become : True
+  user :
+    name : "{{ aptly_user }}"
+    comment : "User for aptly repository management"
+    home : "{{ aptly_user_home }}"
+    shell : "/bin/false"
+
+- name : Change home permission
+  become : True
+  file :
+    dest : "{{ aptly_user_home }}"
+    mode : "0700"
+
+- name : Install aptly package
+  become : True
+  apt :
+    name : "aptly"
+    cache_valid_time : 3600
+    update_cache : True
+    state : present
+
