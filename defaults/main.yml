@@ -40,10 +40,6 @@ aptly_swift_publish_endpoints : {}
 
 # Mirror management
 #------------------
-aptly_archive_keyring_file: "{{
-  '/usr/share/keyrings/'
-  ~ (ansible_distribution | lower) ~ '-archive-keyring.gpg' }}"
-aptly_mirror_remove_all_mirrors: False
 aptly_mirror_do_updates: False
 aptly_mirrors: []
 

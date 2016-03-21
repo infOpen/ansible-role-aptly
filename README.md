@@ -85,9 +85,6 @@ You can manage aptly mirrors with this role with the following settings.
 
 > Note: Only create, update and drop actions are managed !
 
-If you want remove all existing mirrors, set "aptly_mirror_remove_all_mirrors"
-to True.
-
 If you want launching mirrors updates during the playbook execution, set
 "aptly_mirror_do_updates" to True.
 
