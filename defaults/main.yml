@@ -7,16 +7,16 @@ aptly_custom_gpg_key_file : False
 aptly_custom_gpg_key_id   : False
 
 # User settings
-aptly_user    : aptly
-aptly_group   : aptly
-aptly_user_home : "/var/lib/aptly"
+aptly_user    : 'aptly'
+aptly_group   : 'aptly'
+aptly_user_home : '/var/lib/aptly'
 
 # Software settings
-aptly_version       : "0.9.5"
+aptly_version       : '0.9.5'
 aptly_activate_api  : False
-aptly_gpg_key       : E083A3782A194991
-aptly_gpg_keyserver : "hkp://pgp.mit.edu" # "hkp://keys.gnupg.net" : timeout
-aptly_repository    : "deb http://repo.aptly.info/ squeeze main"
+aptly_gpg_key       : '9E3E53F19C7DE460'
+aptly_gpg_keyserver : 'hkp://keys.gnupg.net'
+aptly_repository    : 'deb http://repo.aptly.info/ squeeze main'
 
 # Aptly configuration
 aptly_rootdir : "{{ aptly_user_home }}"
@@ -30,8 +30,8 @@ aptly_dependency_follow_source : False
 aptly_gpg_disable_sign : False
 aptly_gpg_disable_verify : False
 aptly_download_source_packages : False
-aptly_ppa_distributor_id : "ubuntu"
-aptly_ppa_codename : ""
+aptly_ppa_distributor_id : 'ubuntu'
+aptly_ppa_codename : ''
 aptly_s3_publish_endpoints : {}
 aptly_swift_publish_endpoints : {}
 
