@@ -1,58 +1,59 @@
-aptly
-=====
+# aptly
 
 [![Build Status](https://travis-ci.org/infOpen/ansible-role-aptly.svg?branch=master)](https://travis-ci.org/infOpen/ansible-role-aptly)
 
 Install aptly package.
 
-Requirements
-------------
+## Requirements
 
-This role requires Ansible 1.5 or higher, and platform requirements are listed
-in the metadata file.
+This role requires Ansible 2.0 or higher,
+and platform requirements are listed in the metadata file.
 
-User should have a custom GPG key, not automatic creation
+## Testing
 
-Testing
--------
+This role contains two tests methods :
+- locally using Vagrant
+- automatically with Travis
 
-This role has two test methods :
+### Testing dependencies
+- install [Vagrant](https://www.vagrantup.com)
+- install [Vagrant serverspec plugin](https://github.com/jvoorhis/vagrant-serverspec)
+    $ vagrant plugin install vagrant-serverspec
+- install ruby dependencies
+    $ bundle install
 
-- localy with Vagrant :
-    vagrant up
+### Running tests
 
-- automaticaly by Travis
+#### Run playbook and test
 
-To not have a fake gpg key used only for tests, i've add tags for tasks about
-gpg.
-These tasks are skipped for Travis tests, but can be tested by Vagrant with
-proper environment variables :
-- APTLY_CUSTOM_GPG_KEY_FILE
-- APTLY_CUSTOM_GPG_KEY_ID
+- if Vagrant box not running
+    $ vagrant up
 
-Vagrant should be used to check the role before push changes to Github.
+- if Vagrant box running
+    $ vagrant provision
 
-Role Variables
---------------
+## Role Variables
+
+### Default role variables
 
 Follow the possible variables with their default values
 
     # Custom gpg key
     aptly_custom_gpg_key_file : False
     aptly_custom_gpg_key_id   : False
-    
+
     # User settings
     aptly_user    : aptly
     aptly_group   : aptly
     aptly_user_home : "/var/lib/aptly"
-    
+
     # Software settings
     aptly_version       : "0.9.5"
     aptly_activate_api  : False
     aptly_gpg_key       : E083A3782A194991
     aptly_gpg_keyserver : "hkp://pgp.mit.edu" # "hkp://keys.gnupg.net" : timeout
     aptly_repository    : "deb http://repo.aptly.info/ squeeze main"
-    
+
     # Aptly configuration
     aptly_rootdir : "{{ aptly_user_home }}"
     aptly_download_concurrency : 4
@@ -70,27 +71,23 @@ Follow the possible variables with their default values
     aptly_s3_publish_endpoints : {}
     aptly_swift_publish_endpoints : {}
 
-Dependencies
-------------
+## Dependencies
 
 None
 
-Example Playbook
-----------------
+## Example Playbook
 
     - hosts: servers
       roles:
-         - { role: achaussier.aptly }
+         - { role: infOpen.aptly }
 
-License
--------
+## License
 
 MIT
 
-Author Information
-------------------
+## Author Information
 
 Alexandre Chaussier (for Infopen company)
 - http://www.infopen.pro
-- a.chaussier [at] infopen.pro } }}"
+- a.chaussier [at] infopen.pro
 
