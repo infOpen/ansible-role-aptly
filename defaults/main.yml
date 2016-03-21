@@ -12,7 +12,7 @@ aptly_group   : 'aptly'
 aptly_user_home : '/var/lib/aptly'
 
 # Software settings
-aptly_version       : '0.9.5'
+aptly_version       : '0.9.6'
 aptly_activate_api  : False
 aptly_gpg_key       : '9E3E53F19C7DE460'
 aptly_gpg_keyserver : 'hkp://keys.gnupg.net'
