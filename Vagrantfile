@@ -79,6 +79,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       # Run Ansible provisioning
       vm_config.vm.provision "ansible" do |ansible|
         ansible.playbook  = "tests/test_vagrant.yml"
+        ansible.skip_tags = 'custom_gpg'
       end
 
       # Run Serverspec tests

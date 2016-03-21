@@ -7,7 +7,9 @@
   roles:
     - "{{ role_name }}"
   post_tasks:
-    - include: ./test_common.yml
+    - include: './test_common.yml'
   vars:
     role_name: "{{ lookup('env','TRAVIS_REPO_SLUG') }}"
+  vars_files:
+    - './test_vars.yml'
 

@@ -1,0 +1,42 @@
+---
+
+# Custom GPG key management
+
+- fail :
+    msg : A custom gpg key should be defined
+  when : "{{ (aptly_custom_gpg_key_file == False)
+              or (aptly_custom_gpg_key_id == False) }}"
+
+- name : Check if gpg key already imported
+  become : True
+  become_user : "{{ aptly_user }}"
+  register : custom_gpg_check
+  command : 'gpg --list-secret-keys'
+  changed_when : False
+
+- name : Upload custom gpg key
+  become : True
+  copy :
+    src : "{{ aptly_custom_gpg_key_file }}"
+    dest : '/tmp/'
+    owner : "{{ aptly_user }}"
+    group : "{{ aptly_user }}"
+    mode : '0400'
+  when : custom_gpg_check.stdout.find(aptly_custom_gpg_key_id) == -1
+
+- name : Import custom gpg key
+  become : True
+  become_user : "{{ aptly_user }}"
+  shell : >
+    gpg
+    --allow-secret-key-import
+    --import /tmp/{{ aptly_custom_gpg_key_file | basename }}
+  when : custom_gpg_check.stdout.find(aptly_custom_gpg_key_id) == -1
+
+- name : Remove custom gpg key file
+  become : True
+  file :
+    path : "/tmp/{{ aptly_custom_gpg_key_file | basename }}"
+    state : 'absent'
+  when : custom_gpg_check.stdout.find(aptly_custom_gpg_key_id) == -1
+

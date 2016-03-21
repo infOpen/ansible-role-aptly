@@ -1,0 +1,18 @@
+---
+
+# Configuration management
+
+- name: Generate configuration
+  become: True
+  become_user: "{{ aptly_user }}"
+  template:
+    src: "{{ role_path }}/templates/aptly.conf.j2"
+    dest: "{{ aptly_user_home }}/.aptly.conf"
+    mode: '0700'
+
+- name: Mirror management
+  include: "{{ role_path }}/tasks/mirror_management.yml"
+
+- name: Repo management
+  include: "{{ role_path }}/tasks/repo_management.yml"
+

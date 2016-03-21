@@ -1,2 +1,9 @@
 ---
+
 # handlers file for aptly
+
+- name: Clean aptly database
+  become: True
+  become_user: "{{ aptly_user }}"
+  command: 'aptly db cleanup'
+

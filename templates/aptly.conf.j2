@@ -1,10 +1,8 @@
-// {{ ansible_managed }}
-
 {
   "rootDir": "{{ aptly_user_home }}",
   "downloadConcurrency": {{ aptly_download_concurrency }},
   "downloadSpeedLimit": {{ aptly_download_speed_limit }},
-  "architectures": [ {{ aptly_architectures | join(',') }} ],
+  "architectures": [ {{ aptly_architectures | wrap_list_elements | join(',') }} ],
   "dependencyFollowSuggests": {{ aptly_dependency_follow_suggests | lower }},
   "dependencyFollowRecommends": {{ aptly_dependency_follow_recommends | lower }},
   "dependencyFollowAllVariants": {{ aptly_dependency_follow_all_variants | lower }},

@@ -1,96 +1,22 @@
 ---
 
-# Tasks file for aptly
+# Main tasks file for aptly
 
-- fail :
-    msg : A custom gpg key should be defined
-  when : "{{ (aptly_custom_gpg_key_file == False)
-              or (aptly_custom_gpg_key_id == False) }}"
-  tags :
+- name: Include installation tasks
+  include: "{{ role_path }}/tasks/installation.yml"
+  tags:
+    - 'aptly'
+    - 'installation'
+
+- name: Include custom GPG key management tasks
+  include: "{{ role_path }}/tasks/custom_gpg_key.yml"
+  tags:
+    - 'aptly'
     - 'custom_gpg'
 
-- name : Import aptly GPG key
-  become : True
-  apt_key :
-    id : "{{ aptly_gpg_key }}"
-    keyserver : "{{ aptly_gpg_keyserver }}"
-    state : 'present'
-
-- name : Install aptly repository
-  become : True
-  apt_repository :
-    repo : "{{ aptly_repository }}"
-    update_cache : True
-    state : 'present'
-
-- name : Create aptly user
-  become : True
-  user :
-    name : "{{ aptly_user }}"
-    comment : 'User for aptly repository management'
-    home : "{{ aptly_user_home }}"
-    shell : '/bin/false'
-
-- name : Change home permission
-  become : True
-  file :
-    dest : "{{ aptly_user_home }}"
-    mode : '0700'
-
-- name : Install aptly package
-  become : True
-  apt :
-    name : 'aptly'
-    cache_valid_time : 3600
-    update_cache : True
-    state : 'present'
-
-- name : Check if gpg key already imported
-  become : True
-  become_user : "{{ aptly_user }}"
-  register : custom_gpg_check
-  command : 'gpg --list-secret-keys'
-  changed_when : False
-  tags :
-    - 'custom_gpg'
-
-- name : Upload custom gpg key
-  become : True
-  copy :
-    src : "{{ aptly_custom_gpg_key_file }}"
-    dest : '/tmp/'
-    owner : "{{ aptly_user }}"
-    group : "{{ aptly_user }}"
-    mode : '0400'
-  when : custom_gpg_check.stdout.find(aptly_custom_gpg_key_id) == -1
-  tags :
-    - 'custom_gpg'
-
-- name : Import custom gpg key
-  become : True
-  become_user : "{{ aptly_user }}"
-  shell : >
-    gpg
-    --allow-secret-key-import
-    --import /tmp/{{ aptly_custom_gpg_key_file | basename }}
-  when : custom_gpg_check.stdout.find(aptly_custom_gpg_key_id) == -1
-  tags :
-    - 'custom_gpg'
-
-- name : Remove custom gpg key file
-  become : True
-  file :
-    path : "/tmp/{{ aptly_custom_gpg_key_file | basename }}"
-    state : 'absent'
-  when : custom_gpg_check.stdout.find(aptly_custom_gpg_key_id) == -1
-  tags :
-    - 'custom_gpg'
-
-- name : Generate configuration
-  become : True
-  become_user : "{{ aptly_user }}"
-  template :
-    src : "{{ role_path }}/templates/aptly.conf.j2"
-    dest : "{{ aptly_user_home }}/.aptly.conf"
-    mode : '0700'
+- name: Include configuration management tasks
+  include: "{{ role_path }}/tasks/configuration.yml"
+  tags:
+    - 'aptly'
+    - 'configuration'
 

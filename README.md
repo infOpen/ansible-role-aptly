@@ -71,6 +71,59 @@ Follow the possible variables with their default values
     aptly_s3_publish_endpoints : {}
     aptly_swift_publish_endpoints : {}
 
+    # Mirror management
+    #------------------
+    aptly_mirror_remove_all_mirrors: False
+    aptly_mirror_do_updates: False
+    aptly_mirrors: []
+
+## How manage ...
+
+### mirrors
+
+You can manage aptly mirrors with this role with the following settings.
+
+> Note: Only create, update and drop actions are managed !
+
+If you want launching mirrors updates during the playbook execution, set
+"aptly_mirror_do_updates" to True.
+
+You can define mirrors using "aptly_mirrors" list.
+Mirror definition example:
+
+    - name: 'my_mirror'
+      archive_url: 'http://foo.bar/foobar'
+      distribution: 'trusty'
+      do_update: True
+      component1:
+        - 'main'
+      create_flags:
+        - 'filter="nginx"'
+        - 'keyring="foo.bar.gpg"'
+      update_flags:
+        - 'keyring="foo.bar.gpg"'
+      gpg:
+        key: 'fdsfqdsfqsfd'
+        server: 'server-keys.org'
+        keyring: 'foo.bar.gpg'
+      state: 'present'
+
+### repos
+
+You can manage aptly repos with this role with the following settings.
+
+> Note: Only create and drop actions are managed !
+
+You can define mirrors using "aptly_repos" list.
+Repo definition example:
+
+    - name: 'testing'
+      create_flags:
+        - '-comment="Testing repository"'
+        - '-component="main"'
+        - '-distribution="trusty"'
+      state: 'present'
+
 ## Dependencies
 
 None
