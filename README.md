@@ -108,6 +108,22 @@ Mirror definition example:
         keyring: 'foo.bar.gpg'
       state: 'present'
 
+### repos
+
+You can manage aptly repos with this role with the following settings.
+
+> Note: Only create and drop actions are managed !
+
+You can define mirrors using "aptly_repos" list.
+Repo definition example:
+
+    - name: 'testing'
+      create_flags:
+        - '-comment="Testing repository"'
+        - '-component="main"'
+        - '-distribution="trusty"'
+      state: 'present'
+
 ## Dependencies
 
 None

@@ -43,3 +43,7 @@ aptly_swift_publish_endpoints : {}
 aptly_mirror_do_updates: False
 aptly_mirrors: []
 
+# Repo management
+#----------------
+aptly_repos: []
+

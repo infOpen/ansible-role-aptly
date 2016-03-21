@@ -13,3 +13,6 @@
 - name: Mirror management
   include: "{{ role_path }}/tasks/mirror_management.yml"
 
+- name: Repo management
+  include: "{{ role_path }}/tasks/repo_management.yml"
+

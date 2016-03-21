@@ -20,4 +20,11 @@ aptly_mirrors:
       server: 'keyserver.ubuntu.com'
       keyring: 'maria_10_trusty_main.gpg'
     state: 'present'
+aptly_repos:
+  - name: 'testing'
+    create_flags:
+      - '-comment="Testing packages"'
+      - '-component="main"'
+      - '-distribution="trusty"'
+    state: 'present'
 

@@ -1,0 +1,35 @@
+---
+
+# Repos management
+
+- name: List available repos
+  become: True
+  become_user: "{{ aptly_user }}"
+  command: 'aptly repo list -raw'
+  changed_when: False
+  register: aptly_repos_list
+
+- name: Remove repos
+  become: True
+  become_user: "{{ aptly_user }}"
+  command: "aptly repo drop {{ item.name }}"
+  register: aptly_repos_removed
+  notify: "Clean aptly database"
+  with_items: "{{ aptly_repos }}"
+  when:
+    - "{{ item.state == 'absent' }}"
+    - "{{ item.name in aptly_repos_list.stdout_lines }}"
+
+- name: Create repos
+  become: True
+  become_user: "{{ aptly_user }}"
+  command: >
+    aptly repo create
+    {{ item.create_flags | join(' ') }}
+    {{ item.name }}
+  register: aptly_repos_created
+  with_items: "{{ aptly_repos }}"
+  when:
+    - "{{ item.state == 'present' }}"
+    - "{{ item.name not in aptly_repos_list.stdout_lines }}"
+
