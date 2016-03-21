@@ -17,6 +17,9 @@ aptly_activate_api  : False
 aptly_gpg_key       : '9E3E53F19C7DE460'
 aptly_gpg_keyserver : 'hkp://keys.gnupg.net'
 aptly_repository    : 'deb http://repo.aptly.info/ squeeze main'
+aptly_packages:
+  - 'aptly'
+  - 'debian-keyring'
 
 # Aptly configuration
 aptly_rootdir : "{{ aptly_user_home }}"
@@ -34,4 +37,13 @@ aptly_ppa_distributor_id : 'ubuntu'
 aptly_ppa_codename : ''
 aptly_s3_publish_endpoints : {}
 aptly_swift_publish_endpoints : {}
+
+# Mirror management
+#------------------
+aptly_archive_keyring_file: "{{
+  '/usr/share/keyrings/'
+  ~ (ansible_distribution | lower) ~ '-archive-keyring.gpg' }}"
+aptly_mirror_remove_all_mirrors: False
+aptly_mirror_do_updates: False
+aptly_mirrors: []
 

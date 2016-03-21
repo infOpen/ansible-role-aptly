@@ -33,8 +33,9 @@
 - name : Install aptly package
   become : True
   apt :
-    name : 'aptly'
+    name : "{{ item }}"
     cache_valid_time : 3600
     update_cache : True
     state : 'present'
+  with_items: "{{ aptly_packages }}"
 
