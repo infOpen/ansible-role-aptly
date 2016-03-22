@@ -11,7 +11,7 @@ describe 'aptly Ansible role' do
     aptly_user = 'aptly'
     aptly_group = 'aptly'
     aptly_home = '/var/lib/aptly'
-    aptly_shell = '/bin/false'
+    aptly_shell = '/bin/bash'
 
     if ['debian', 'ubuntu'].include?(os[:family])
         packages = Array[ 'aptly' ]
