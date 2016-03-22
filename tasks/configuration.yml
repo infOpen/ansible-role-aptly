@@ -10,6 +10,9 @@
     dest: "{{ aptly_user_home }}/.aptly.conf"
     mode: '0700'
 
+- name: System archive GPG keys management
+  include: "{{ role_path }}/tasks/archive_gpg_keys.yml"
+
 - name: Mirror management
   include: "{{ role_path }}/tasks/mirror_management.yml"
 

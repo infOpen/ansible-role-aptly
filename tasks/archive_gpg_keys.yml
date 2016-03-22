@@ -1,0 +1,23 @@
+---
+
+# Manage current archive of gpg keys
+
+- name: Import system archive GPG keys
+  become: True
+  become_user: "{{ aptly_user }}"
+  shell: >
+    gpg --no-default-keyring --keyring
+    /usr/share/keyrings/{{ ansible_distribution | lower }}-archive-keyring.gpg
+    --export | gpg --no-default-keyring
+    --keyring {{ aptly_system_archive_gpg_keys_keyring }} --import
+  register: aptly_archive_gpg_keys_added
+  changed_when: False
+  when: "{{ aptly_system_archive_gpg_keys_import == True }}"
+
+- name: Check if new GPG key managed
+  command: 'echo "New GPG key"'
+  when:
+    - "{{ aptly_system_archive_gpg_keys_import == True }}"
+    - "{{ aptly_archive_gpg_keys_added.result.stderr is defined }}"
+    - "{{ aptly_archive_gpg_keys_added.result.stderr.find(' changed:') != -1 }}"
+

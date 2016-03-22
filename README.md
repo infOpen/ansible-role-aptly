@@ -42,6 +42,10 @@ Follow the possible variables with their default values
     aptly_custom_gpg_key_file : False
     aptly_custom_gpg_key_id   : False
 
+    # System gpg keys archive import
+    aptly_system_archive_gpg_keys_import: True
+    aptly_system_archive_gpg_keys_keyring: 'system-trusted.gpg'
+
     # User settings
     aptly_user    : aptly
     aptly_group   : aptly
