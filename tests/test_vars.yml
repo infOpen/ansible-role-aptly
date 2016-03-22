@@ -13,8 +13,10 @@ aptly_mirrors:
       - 'main'
     create_flags:
       - '-keyring="maria_10_trusty_main.gpg"'
+      - '-keyring="{{ aptly_system_archive_gpg_keys_keyring }}"'
     update_flags:
       - '-keyring="maria_10_trusty_main.gpg"'
+      - '-keyring="{{ aptly_system_archive_gpg_keys_keyring }}"'
     gpg:
       key: '1BB943DB'
       server: 'keyserver.ubuntu.com'
