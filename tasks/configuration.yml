@@ -8,6 +8,8 @@
   template:
     src: "{{ role_path }}/templates/aptly.conf.j2"
     dest: "{{ aptly_user_home }}/.aptly.conf"
+    owner: "{{ aptly_user }}"
+    group: "{{ aptly_group }}"
     mode: '0700'
 
 - name: System archive GPG keys management
