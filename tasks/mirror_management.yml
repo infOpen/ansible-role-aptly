@@ -4,19 +4,18 @@
 
 - name: List available mirrors
   become: True
-  become_user: "{{ aptly_user }}"
-  command: 'aptly mirror list -raw'
+  shell: >
+    su - {{ aptly_user }} -c 'aptly mirror list -raw'
   changed_when: False
   register: aptly_mirrors_list
 
 - name: Import mirror target GPG keys
   become: True
-  become_user: "{{ aptly_user }}"
   shell: >
-    gpg --no-default-keyring
+    su - {{ aptly_user }} -c 'gpg --no-default-keyring
     --keyserver {{ item.gpg.server }}
     --keyring {{ item.gpg.keyring }}
-    --recv-keys {{ item.gpg.key }}
+    --recv-keys {{ item.gpg.key }}'
   register: aptly_mirror_target_gpg_keys_added
   changed_when: false
   with_items: "{{ aptly_mirrors }}"
@@ -36,8 +35,8 @@
 
 - name: Remove mirrors
   become: True
-  become_user: "{{ aptly_user }}"
-  command: "aptly mirror drop {{ item.name }}"
+  shell: >
+    su - {{ aptly_user }} -c 'aptly mirror drop {{ item.name }}'
   register: aptly_mirrors_removed
   notify: "Clean aptly database"
   with_items: "{{ aptly_mirrors }}"
@@ -47,12 +46,11 @@
 
 - name: Create mirrors
   become: True
-  become_user: "{{ aptly_user }}"
-  command: >
-    aptly mirror create
-    {{ item.create_flags | join(' ') }}
-    {{ item.name }} '{{ item.archive_url }}'
-    {{ item.distribution }} {{ item.component1 | join(' ') }}
+  shell: >
+    su - {{ aptly_user }} -c 'aptly mirror create
+    {{ item.create_flags | join(" ") }}
+    {{ item.name }} "{{ item.archive_url }}"
+    {{ item.distribution }} {{ item.component1 | join(" ") }}'
   register: aptly_mirrors_created
   with_items: "{{ aptly_mirrors }}"
   when:
@@ -61,10 +59,10 @@
 
 - name: Update mirrors
   become: True
-  become_user: "{{ aptly_user }}"
-  command: >
-    aptly mirror update {{ item.update_flags | join(' ') }}
-    {{ item.name }}
+  shell: >
+    su - {{ aptly_user }}
+    -c 'aptly mirror update {{ item.update_flags | join(" ") }}
+    {{ item.name }}'
   with_items: "{{ aptly_mirrors }}"
   when:
     - "{{ item.state == 'present' }}"

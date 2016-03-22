@@ -22,7 +22,7 @@
     name : "{{ aptly_user }}"
     comment : 'User for aptly repository management'
     home : "{{ aptly_user_home }}"
-    shell : '/bin/false'
+    shell : '/bin/bash'
 
 - name : Change home permission
   become : True
