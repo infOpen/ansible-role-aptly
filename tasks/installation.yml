@@ -23,6 +23,7 @@
     comment : 'User for aptly repository management'
     home : "{{ aptly_user_home }}"
     shell : '/bin/bash'
+    uid: "{{ aptly_uid | default(omit) }}"
 
 - name : Change home permission
   become : True
