@@ -16,12 +16,19 @@
     update_cache : True
     state : 'present'
 
-- name : Create aptly user
+- name: Ensure aptly group
+  become : True
+  group:
+    name: "{{ aptly_group }}"
+    gid: "{{ aptly_gid | default(omit) }}"
+
+- name : Ensure aptly user
   become : True
   user :
     name : "{{ aptly_user }}"
     comment : 'User for aptly repository management'
     home : "{{ aptly_user_home }}"
+    group: "{{ aptly_group }}"
     shell : '/bin/bash'
     uid: "{{ aptly_uid | default(omit) }}"
 
