@@ -3,44 +3,45 @@
 # Defaults file for aptly
 
 # Custom gpg key
-aptly_custom_gpg_key_file : False
-aptly_custom_gpg_key_id   : False
+aptly_custom_gpg_key_file: False
+aptly_custom_gpg_key_id: False
 
 # System gpg keys archive import
 aptly_system_archive_gpg_keys_import: True
 aptly_system_archive_gpg_keys_keyring: 'system-trusted.gpg'
 
 # User settings
-aptly_user    : 'aptly'
-aptly_group   : 'aptly'
-aptly_user_home : '/var/lib/aptly'
+aptly_user: 'aptly'
+aptly_group: 'aptly'
+aptly_user_home: '/var/lib/aptly'
 
 # Software settings
-aptly_version       : '0.9.6'
-aptly_activate_api  : False
-aptly_gpg_key       : '9E3E53F19C7DE460'
-aptly_gpg_keyserver : 'hkp://keys.gnupg.net'
-aptly_repository    : 'deb http://repo.aptly.info/ squeeze main'
+aptly_version: '0.9.6'
+aptly_activate_api: False
+aptly_gpg_key: '9E3E53F19C7DE460'
+aptly_gpg_keyserver: 'hkp://keys.gnupg.net'
+aptly_repository: 'deb http://repo.aptly.info/ squeeze main'
+aptly_repository_file_mode: '0644'
 aptly_packages:
   - 'aptly'
   - 'debian-keyring'
 
 # Aptly configuration
-aptly_rootdir : "{{ aptly_user_home }}"
-aptly_download_concurrency : 4
-aptly_download_speed_limit : 0
-aptly_architectures : []
-aptly_dependency_follow_suggests : False
-aptly_dependency_follow_recommends : False
-aptly_dependency_follow_all_variants : False
-aptly_dependency_follow_source : False
-aptly_gpg_disable_sign : False
-aptly_gpg_disable_verify : False
-aptly_download_source_packages : False
-aptly_ppa_distributor_id : 'ubuntu'
-aptly_ppa_codename : ''
-aptly_s3_publish_endpoints : {}
-aptly_swift_publish_endpoints : {}
+aptly_rootdir: "{{ aptly_user_home }}"
+aptly_download_concurrency: 4
+aptly_download_speed_limit: 0
+aptly_architectures: []
+aptly_dependency_follow_suggests: False
+aptly_dependency_follow_recommends: False
+aptly_dependency_follow_all_variants: False
+aptly_dependency_follow_source: False
+aptly_gpg_disable_sign: False
+aptly_gpg_disable_verify: False
+aptly_download_source_packages: False
+aptly_ppa_distributor_id: 'ubuntu'
+aptly_ppa_codename: ''
+aptly_s3_publish_endpoints: {}
+aptly_swift_publish_endpoints: {}
 
 # Mirror management
 #------------------
@@ -50,4 +51,3 @@ aptly_mirrors: []
 # Repo management
 #----------------
 aptly_repos: []
-

@@ -2,7 +2,7 @@
 
 # Configuration management
 
-- name: Generate configuration
+- name: 'CONFIG | Manage configuration file'
   become: True
   become_user: "{{ aptly_user }}"
   template:
@@ -12,12 +12,14 @@
     group: "{{ aptly_group }}"
     mode: '0700'
 
-- name: System archive GPG keys management
+
+- name: 'CONFIG | System archive GPG keys management'
   include: "{{ role_path }}/tasks/archive_gpg_keys.yml"
 
-- name: Mirror management
+
+- name: 'CONFIG | Mirror management'
   include: "{{ role_path }}/tasks/mirror_management.yml"
 
-- name: Repo management
-  include: "{{ role_path }}/tasks/repo_management.yml"
 
+- name: 'CONFIG | Repo management'
+  include: "{{ role_path }}/tasks/repo_management.yml"

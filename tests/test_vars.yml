@@ -4,6 +4,7 @@
 
 aptly_architectures:
   - 'amd64'
+
 aptly_mirrors:
   - name: 'mariadb_10.0'
     archive_url: 'http://ftp.igh.cnrs.fr/pub/mariadb/repo/10.0/ubuntu'
@@ -22,6 +23,7 @@ aptly_mirrors:
       server: 'keyserver.ubuntu.com'
       keyring: 'maria_10_trusty_main.gpg'
     state: 'present'
+
 aptly_repos:
   - name: 'testing'
     create_flags:
@@ -29,4 +31,3 @@ aptly_repos:
       - '-component="main"'
       - '-distribution="trusty"'
     state: 'present'
-

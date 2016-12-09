@@ -2,21 +2,22 @@
 
 # Main tasks file for aptly
 
-- name: Include installation tasks
+- name: 'INSTALL | Include installation tasks'
   include: "{{ role_path }}/tasks/installation.yml"
   tags:
-    - 'aptly'
-    - 'installation'
+    - 'role::aptly'
+    - 'role::aptly::install'
 
-- name: Include custom GPG key management tasks
+
+- name: 'GPG | Include custom GPG key management tasks'
   include: "{{ role_path }}/tasks/custom_gpg_key.yml"
   tags:
-    - 'aptly'
-    - 'custom_gpg'
+    - 'role::aptly'
+    - 'role::aptly::custom-gpg'
 
-- name: Include configuration management tasks
+
+- name: 'CONFIG | Include configuration management tasks'
   include: "{{ role_path }}/tasks/configuration.yml"
   tags:
-    - 'aptly'
-    - 'configuration'
-
+    - 'role::aptly'
+    - 'role::aptly::config'
