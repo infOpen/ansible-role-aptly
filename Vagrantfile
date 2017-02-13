@@ -2,92 +2,77 @@
 # vi: set ft=ruby :
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
-VAGRANTFILE_API_VERSION = "2"
+VAGRANTFILE_API_VERSION = '2'
 
-# Ansible version
-ANSIBLE_DOWNLOAD_SOURCE = ENV['ANSIBLE_DOWNLOAD_SOURCE'] || "pip"
-ANSIBLE_GIT_CHECKOUT = ENV['ANSIBLE_GIT_CHECKOUT'] || "HEAD"
-ANSIBLE_GIT_REPOSITORY = ENV['ANSIBLE_GIT_REPOSITORY'] \
-                          || "https://github.com/ansible/ansible.git"
+# Require 'yaml' module
+require 'yaml'
 
-# Managed boxes for this role (should have all platform and version defined in
-# meta/main.yml)
-VMS = {
-  :aptly_trusty => {
-    :box => "ubuntu/trusty64"
-  }
-}
+# Read YAML file with VMs details
+vagrant_config = YAML.load_file('./vagrant_config.yml')
 
+# VMs management
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  VMS.each_pair do |name, options|
+  vagrant_config['vagrant_servers'].each do |server|
 
-    config.vm.define name do |vm_config|
+    # Define Server seetings
+    config.vm.synced_folder ".", "/vagrant", type: vagrant_config['vagrant_synced_folder_type']
+    config.vm.define server['name'] do |vm_config|
 
-      # Set proper box
-      vm_config.vm.box = options[:box]
+      # Port forwarding management
+      server['forwarded_port'].each do |port_config|
+        vm_config.vm.network "forwarded_port", guest: port_config['guest'], host: port_config['host']
+      end
 
-      # Update system and install requirements
-      vm_config.vm.provision "shell" do |sh|
-        if ANSIBLE_DOWNLOAD_SOURCE == 'git'
-          sh.inline = "test -d /usr/local/src/ansible \
-                        || (sudo apt-get update \
-                            && sudo apt-get install python-pip curl git -y \
-                            && sudo pip install paramiko PyYAML Jinja2 \
-                                                httplib2 six pytest \
-                                                ansible-lint \
-                            && cd /usr/local/src \
-                            && sudo git clone #{ANSIBLE_GIT_REPOSITORY} \
-                            && cd ansible \
-                            && sudo git checkout #{ANSIBLE_GIT_CHECKOUT} \
-                            && sudo git submodule init \
-                            && sudo git submodule update \
-                            && sudo make install)"
-        else
-          sh.inline = "test -f /usr/local/bin/ansible \
-                        || (sudo apt-get update \
-                            && sudo apt-get install python-pip curl git -y \
-                            && sudo pip install paramiko PyYAML Jinja2 \
-                                                httplib2 six pytest ansible \
-                                                ansible-lint)"
+      # Set proper box and hostname
+      vm_config.vm.box = server['box']
+      vm_config.vm.hostname = server['name']
+
+
+      # Virtualbox vm name management
+      vm_config.vm.provider vagrant_config['vagrant_provider'] do |vm|
+          vm.name = server['name']
+          vm.memory = server['memory']
+          vm.cpus = server['cpus']
+      end
+
+
+      # Install python 2.7 if not present (On Xenial)
+      vm_config.vm.provision 'shell' do |sh|
+
+        # Debian family
+        if (server['family'] == 'debian')
+          sh.inline = '! type -P python2.7 \
+                       && (sudo apt-get update \
+                       && sudo apt-get install python2.7 -y) || true'
+        elsif (server['family'] == 'redhat')
+          sh.inline = '! type -P python2.7 \
+                       && sudo yum install python2.7 -y || true'
         end
       end
 
-      # Run pytest tests for filter plugins
-      vm_config.vm.provision "shell" do |sh|
-        sh.inline = "cd /vagrant \
-                      && rm -f tests/__pycache__/*.pyc \
-                      && py.test -v"
-        sh.privileged = false
+
+      # Create vm public key
+      vm_config.vm.provision 'shell' do |sh|
+        sh.inline = "ssh-keygen -y -f /vagrant/.vagrant/machines/#{server['name']}/#{vagrant_config['vagrant_provider']}/private_key > /vagrant/.vagrant/machines/#{server['name']}/#{vagrant_config['vagrant_provider']}/public_key"
       end
 
-      # Use trigger plugin to set environment variable used by Ansible
-      # Needed with 2.0 home path change
-      vm_config.vm.provision "trigger" do |trigger|
-        trigger.fire do
-          ENV['ANSIBLE_ROLES_PATH'] = '../'
-          ENV['ANSIBLE_ROLE_NAME'] = File.basename(Dir.getwd)
+      # Run provisionners
+      vagrant_config['ansible_playbooks'].each do |playbook|
+
+        # Run Ansible provisioning
+        vm_config.vm.provision 'ansible' do |ansible|
+          ansible.playbook = playbook
+          ansible.galaxy_roles_path = '../'
+          # Enable requirement if role has dependencies
+          # ansible.galaxy_role_file = './requirements.yml'
+          ansible.extra_vars = {
+            ansible_python_interpreter: '/usr/bin/env python2.7'
+          }
+          ansible.skip_tags = ['role::aptly::custom-gpg']
         end
-      end
-
-      # Run Ansible linter
-      vm_config.vm.provision "shell" do |sh|
-        sh.inline = "cd /vagrant && ansible-lint tasks/main.yml"
-        sh.privileged = false
-      end
-
-      # Run Ansible provisioning
-      vm_config.vm.provision "ansible" do |ansible|
-        ansible.playbook  = "tests/test_vagrant.yml"
-        ansible.skip_tags = 'custom_gpg'
-      end
-
-      # Run Serverspec tests
-      vm_config.vm.provision "serverspec" do |serverspec|
-        serverspec.pattern = 'spec/*_spec.rb'
       end
 
     end
   end
 end
-

@@ -2,48 +2,53 @@
 
 # Installation tasks
 
-- name : Import aptly GPG key
-  become : True
-  apt_key :
-    id : "{{ aptly_gpg_key }}"
-    keyserver : "{{ aptly_gpg_keyserver }}"
-    state : 'present'
+- name: 'INSTALL | APT | Import aptly GPG key'
+  become: True
+  apt_key:
+    id: "{{ aptly_gpg_key }}"
+    keyserver: "{{ aptly_gpg_keyserver }}"
+    state: 'present'
 
-- name : Install aptly repository
-  become : True
-  apt_repository :
-    repo : "{{ aptly_repository }}"
-    update_cache : True
-    state : 'present'
 
-- name: Ensure aptly group
+- name: 'INSTALL | APT | Manage aptly repository'
+  become: True
+  apt_repository:
+    repo: "{{ aptly_repository }}"
+    update_cache: True
+    state: 'present'
+    mode: "{{ aptly_repository_file_mode }}"
+
+
+- name: 'INSTALL | GROUP | Ensure aptly group'
   become : True
   group:
     name: "{{ aptly_group }}"
     gid: "{{ aptly_gid | default(omit) }}"
 
-- name : Ensure aptly user
-  become : True
-  user :
-    name : "{{ aptly_user }}"
-    comment : 'User for aptly repository management'
-    home : "{{ aptly_user_home }}"
+
+- name: 'INSTALL | USER | Ensure aptly user'
+  become: True
+  user:
+    name: "{{ aptly_user }}"
+    comment: 'User for aptly repository management'
+    home: "{{ aptly_user_home }}"
     group: "{{ aptly_group }}"
-    shell : '/bin/bash'
+    shell: '/bin/bash'
     uid: "{{ aptly_uid | default(omit) }}"
 
-- name : Change home permission
-  become : True
-  file :
-    dest : "{{ aptly_user_home }}"
-    mode : '0700'
 
-- name : Install aptly package
-  become : True
-  apt :
-    name : "{{ item }}"
-    cache_valid_time : 3600
-    update_cache : True
-    state : 'present'
+- name: 'INSTALL | USER | Change home permission'
+  become: True
+  file:
+    dest: "{{ aptly_user_home }}"
+    mode: '0700'
+
+
+- name: 'INSTALL | APT | Install aptly package'
+  become: True
+  apt:
+    name: "{{ item }}"
+    cache_valid_time: 3600
+    update_cache: True
+    state: 'present'
   with_items: "{{ aptly_packages }}"
-

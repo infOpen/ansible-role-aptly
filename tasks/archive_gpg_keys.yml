@@ -2,7 +2,7 @@
 
 # Manage current archive of gpg keys
 
-- name: Export system archive GPG keys
+- name: 'GPG | SYSTEM | Export system archive GPG keys'
   become: True
   shell: >
     su - {{ aptly_user }} -c 'gpg --no-default-keyring --keyring
@@ -11,27 +11,30 @@
   changed_when: False
   when: "{{ aptly_system_archive_gpg_keys_import == True }}"
 
-- name: Import system archive GPG keys
+
+- name: 'GPG | SYSTEM | Import system archive GPG keys'
   become: True
   shell: >
     su - {{ aptly_user }} -c 'gpg --no-default-keyring
     --keyring {{ aptly_system_archive_gpg_keys_keyring }} --import
     /tmp/{{ aptly_system_archive_gpg_keys_keyring }}'
-  register: aptly_archive_gpg_keys_added
+  register: 'aptly_archive_gpg_keys_added'
   changed_when: False
   when: "{{ aptly_system_archive_gpg_keys_import == True }}"
 
-- name: Remove temp archive gpg export
+
+- name: 'GPG | SYSTEM | Remove temp archive gpg export'
   become: True
   file:
     dest: "/tmp/{{ aptly_system_archive_gpg_keys_keyring }}"
     state: 'absent'
   changed_when: False
 
-- name: Check if new GPG key managed
-  command: 'echo "New GPG key"'
+
+- name: 'GPG | SYSTEM | Check if new GPG key managed'
+  debug:
+    msg: "{{ aptly_archive_gpg_keys_added.stderr.split('\n') }}"
   when:
     - "{{ aptly_system_archive_gpg_keys_import == True }}"
-    - "{{ aptly_archive_gpg_keys_added.result.stderr is defined }}"
-    - "{{ aptly_archive_gpg_keys_added.result.stderr.find(' changed:') != -1 }}"
-
+    - "{{ aptly_archive_gpg_keys_added.stderr is defined }}"
+    - "{{ aptly_archive_gpg_keys_added.stderr.find(' changed:') != -1 }}"

@@ -2,21 +2,22 @@
 
 # Mirrors management
 
-- name: List available mirrors
+- name: 'CONFIG | MIRRORS | List available mirrors'
   become: True
   shell: >
     su - {{ aptly_user }} -c 'aptly mirror list -raw'
   changed_when: False
-  register: aptly_mirrors_list
+  register: 'aptly_mirrors_list'
 
-- name: Import mirror target GPG keys
+
+- name: 'CONFIG | MIRRORS | Import mirror target GPG keys'
   become: True
   shell: >
     su - {{ aptly_user }} -c 'gpg --no-default-keyring
     --keyserver {{ item.gpg.server }}
     --keyring {{ item.gpg.keyring }}
     --recv-keys {{ item.gpg.key }}'
-  register: aptly_mirror_target_gpg_keys_added
+  register: 'aptly_mirror_target_gpg_keys_added'
   changed_when: false
   with_items: "{{ aptly_mirrors }}"
   when:
@@ -26,38 +27,42 @@
     - "{{ (item.gpg.server is defined) and (item.gpg.server != '') }}"
     - "{{ (item.gpg.keyring is defined) and (item.gpg.keyring != '') }}"
 
-- name: Check if new GPG key managed
+
+- name: 'CONFIG | MIRRORS | Check if new GPG key managed'
   command: 'echo "New GPG key"'
   with_items: "{{ aptly_mirror_target_gpg_keys_added.results }}"
   when:
     - "{{ item.stderr is defined }}"
     - "{{ item.stderr.find(' changed: 1') != -1 }}"
 
-- name: Remove mirrors
+
+- name: 'CONFIG | MIRRORS | Remove mirrors'
   become: True
   shell: >
     su - {{ aptly_user }} -c 'aptly mirror drop {{ item.name }}'
-  register: aptly_mirrors_removed
-  notify: "Clean aptly database"
+  register: 'aptly_mirrors_removed'
+  notify: "HANDLER | Clean aptly database"
   with_items: "{{ aptly_mirrors }}"
   when:
     - "{{ item.state == 'absent' }}"
     - "{{ item.name in aptly_mirrors_list.stdout_lines }}"
 
-- name: Create mirrors
+
+- name: 'CONFIG | MIRRORS | Create mirrors'
   become: True
   shell: >
     su - {{ aptly_user }} -c 'aptly mirror create
     {{ item.create_flags | join(" ") }}
     {{ item.name }} "{{ item.archive_url }}"
     {{ item.distribution }} {{ item.component1 | join(" ") }}'
-  register: aptly_mirrors_created
+  register: 'aptly_mirrors_created'
   with_items: "{{ aptly_mirrors }}"
   when:
     - "{{ item.state == 'present' }}"
     - "{{ item.name not in aptly_mirrors_list.stdout_lines }}"
 
-- name: Update mirrors
+
+- name: 'CONFIG | MIRRORS | Update mirrors'
   become: True
   shell: >
     su - {{ aptly_user }}
@@ -67,4 +72,3 @@
   when:
     - "{{ item.state == 'present' }}"
     - "{{ item.do_update == True }}"
-

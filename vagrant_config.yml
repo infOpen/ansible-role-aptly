@@ -1,0 +1,27 @@
+---
+
+ansible_playbooks:
+  - 'testing_deployment.yml'
+
+vagrant_provider: 'virtualbox'
+vagrant_synced_folder_type: 'virtualbox'
+
+vagrant_servers:
+  - name: 'aptly-jessie'
+    box: 'debian/jessie64'
+    cpus: 1
+    family: 'debian'
+    forwarded_port: []
+    memory: 512
+  - name: 'aptly-trusty'
+    box: 'ubuntu/trusty64'
+    cpus: 1
+    family: 'debian'
+    forwarded_port: []
+    memory: 512
+  - name: 'aptly-xenial'
+    box: 'ubuntu/xenial64'
+    cpus: 1
+    family: 'debian'
+    forwarded_port: []
+    memory: 512
