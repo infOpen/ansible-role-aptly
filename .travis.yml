@@ -10,15 +10,6 @@ services:
 
 language: 'python'
 
-env:
-  global:
-    - 'ANSIBLE_ROLES_PATH="${TRAVIS_BUILD_DIR%/*}"'
-  matrix:
-    - 'ANSIBLE_PKG="ansible>=2.0,<2.1"'
-    - 'ANSIBLE_PKG="ansible>=2.1,<2.2"'
-    - 'ANSIBLE_PKG="ansible>=2.2,<2.3"'
-    - 'ANSIBLE_PKG="git+https://github.com/ansible/ansible.git@devel"'
-
 before_install:
   - 'sudo apt-get update -qq'
   - 'sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine'
