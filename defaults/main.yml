@@ -2,6 +2,8 @@
 
 # Defaults file for aptly
 
+aptly_become_method: 'sudo'
+
 # Custom gpg key
 aptly_custom_gpg_key_file: False
 aptly_custom_gpg_key_id: False
