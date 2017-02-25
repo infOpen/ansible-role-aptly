@@ -10,47 +10,15 @@ services:
 
 language: 'python'
 
-env:
-  global:
-    - 'ANSIBLE_ROLES_PATH="${TRAVIS_BUILD_DIR%/*}"'
-  matrix:
-    - 'ANSIBLE_PKG="ansible>=2.0,<2.1"'
-    - 'ANSIBLE_PKG="ansible>=2.1,<2.2"'
-    - 'ANSIBLE_PKG="ansible>=2.2,<2.3"'
-    - 'ANSIBLE_PKG="git+https://github.com/ansible/ansible.git@devel"'
-
 before_install:
-  # Make sure everything's up to date.
   - 'sudo apt-get update -qq'
-
-  # Install Ansible and pytest.
-  - >
-    sudo pip install "$ANSIBLE_PKG" ansible-lint Jinja2 httplib2 paramiko
-    pytest==2.9.2 PyYAML six testinfra==1.4.2
+  - 'sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine'
 
 script:
-  # Check the role/playbook's syntax.
-  - 'ansible-playbook -i tests/inventory ./testing_deployment.yml --syntax-check'
+  - 'pip install tox-travis'
 
-  # Run linter on role
-  - 'ansible-lint tasks/main.yml'
-
-  # Run the role/playbook with ansible-playbook.
-  - >
-    ansible-playbook -i tests/inventory ./testing_deployment.yml
-    --skip-tags='role::aptly::custom-gpg' --connection=local --sudo
-
-  # Run the role/playbook again, checking to make sure it's idempotent.
-  # Check change == 1 due to mirror update
-  - >
-    ansible-playbook -i tests/inventory ./testing_deployment.yml
-    --skip-tags='role::aptly::custom-gpg' --connection=local --sudo
-    | grep -q 'changed=[1].*failed=0'
-    && (echo 'Idempotence test: pass' && exit 0)
-    || (echo 'Idempotence test: fail' && exit 1)
-
-  # Run testinfra tests
-  - 'testinfra --sudo'
+script:
+  - 'tox'
 
 notifications:
   webhooks: 'https://galaxy.ansible.com/api/v1/notifications/'
