@@ -1,13 +1,11 @@
 """
 Role tests
 """
-import pytest
 
-# To run all the tests on given docker images:
-pytestmark = pytest.mark.docker_images(
-    'infopen/ubuntu-trusty-ssh:0.1.0',
-    'infopen/ubuntu-xenial-ssh-py27:0.2.0'
-)
+import pytest
+from testinfra.utils.ansible_runner import AnsibleRunner
+
+testinfra_hosts = AnsibleRunner('.molecule/ansible_inventory').get_hosts('all')
 
 
 def test_aptly_user(User):

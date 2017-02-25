@@ -2,7 +2,8 @@
 
 # Custom GPG key management
 
-- fail:
+- name: 'GPG | CUSTOM | Check if custom GPG key is defined'
+  fail:
     msg: 'A custom gpg key should be defined'
   when: "{{ (aptly_custom_gpg_key_file == False)
               or (aptly_custom_gpg_key_id == False) }}"
