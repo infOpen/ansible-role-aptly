@@ -9,7 +9,7 @@
     /usr/share/keyrings/{{ ansible_distribution | lower }}-archive-keyring.gpg
     --export --output /tmp/{{ aptly_system_archive_gpg_keys_keyring }}'
   changed_when: False
-  when: "{{ aptly_system_archive_gpg_keys_import == True }}"
+  when: "aptly_system_archive_gpg_keys_import == True"
 
 
 - name: 'GPG | SYSTEM | Import system archive GPG keys'
@@ -20,7 +20,7 @@
     /tmp/{{ aptly_system_archive_gpg_keys_keyring }}'
   register: 'aptly_archive_gpg_keys_added'
   changed_when: False
-  when: "{{ aptly_system_archive_gpg_keys_import == True }}"
+  when: "aptly_system_archive_gpg_keys_import == True"
 
 
 - name: 'GPG | SYSTEM | Remove temp archive gpg export'
@@ -35,6 +35,6 @@
   debug:
     msg: "{{ aptly_archive_gpg_keys_added.stderr.split('\n') }}"
   when:
-    - "{{ aptly_system_archive_gpg_keys_import == True }}"
-    - "{{ aptly_archive_gpg_keys_added.stderr is defined }}"
-    - "{{ aptly_archive_gpg_keys_added.stderr.find(' changed:') != -1 }}"
+    - "aptly_system_archive_gpg_keys_import == True"
+    - "aptly_archive_gpg_keys_added.stderr is defined"
+    - "aptly_archive_gpg_keys_added.stderr.find(' changed:') != -1"

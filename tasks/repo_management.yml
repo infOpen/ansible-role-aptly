@@ -18,8 +18,8 @@
   notify: "HANDLER | Clean aptly database"
   with_items: "{{ aptly_repos }}"
   when:
-    - "{{ item.state == 'absent' }}"
-    - "{{ item.name in aptly_repos_list.stdout_lines }}"
+    - "item.state == 'absent'"
+    - "item.name in aptly_repos_list.stdout_lines"
 
 
 - name: 'CONFIG | REPOS | Create repos'
@@ -31,5 +31,5 @@
   register: 'aptly_repos_created'
   with_items: "{{ aptly_repos }}"
   when:
-    - "{{ item.state == 'present' }}"
-    - "{{ item.name not in aptly_repos_list.stdout_lines }}"
+    - "item.state == 'present'"
+    - "item.name not in aptly_repos_list.stdout_lines"
