@@ -14,6 +14,7 @@ aptly_system_archive_gpg_keys_keyring: 'system-trusted.gpg'
 aptly_user: 'aptly'
 aptly_group: 'aptly'
 aptly_user_home: '/var/lib/aptly'
+aptly_user_home_mode: 0700
 
 # Software settings
 aptly_version: '0.9.6'
