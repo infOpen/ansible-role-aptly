@@ -41,7 +41,7 @@
   become: True
   file:
     dest: "{{ aptly_user_home }}"
-    mode: '0700'
+    mode: "{{ aptly_user_home_mode }}"
 
 
 - name: 'INSTALL | APT | Install aptly package'
