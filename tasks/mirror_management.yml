@@ -21,19 +21,19 @@
   changed_when: false
   with_items: "{{ aptly_mirrors }}"
   when:
-    - "{{ item.state == 'present' }}"
-    - "{{ item.gpg is defined }}"
-    - "{{ (item.gpg.key is defined) and (item.gpg.key != '') }}"
-    - "{{ (item.gpg.server is defined) and (item.gpg.server != '') }}"
-    - "{{ (item.gpg.keyring is defined) and (item.gpg.keyring != '') }}"
+    - "item.state == 'present'"
+    - "item.gpg is defined"
+    - "(item.gpg.key is defined) and (item.gpg.key != '')"
+    - "(item.gpg.server is defined) and (item.gpg.server != '')"
+    - "(item.gpg.keyring is defined) and (item.gpg.keyring != '')"
 
 
 - name: 'CONFIG | MIRRORS | Check if new GPG key managed'
   command: 'echo "New GPG key"'
   with_items: "{{ aptly_mirror_target_gpg_keys_added.results }}"
   when:
-    - "{{ item.stderr is defined }}"
-    - "{{ item.stderr.find(' changed: 1') != -1 }}"
+    - "item.stderr is defined"
+    - "item.stderr.find(' changed: 1') != -1"
 
 
 - name: 'CONFIG | MIRRORS | Remove mirrors'
@@ -44,8 +44,8 @@
   notify: "HANDLER | Clean aptly database"
   with_items: "{{ aptly_mirrors }}"
   when:
-    - "{{ item.state == 'absent' }}"
-    - "{{ item.name in aptly_mirrors_list.stdout_lines }}"
+    - "item.state == 'absent'"
+    - "item.name in aptly_mirrors_list.stdout_lines"
 
 
 - name: 'CONFIG | MIRRORS | Create mirrors'
@@ -58,8 +58,8 @@
   register: 'aptly_mirrors_created'
   with_items: "{{ aptly_mirrors }}"
   when:
-    - "{{ item.state == 'present' }}"
-    - "{{ item.name not in aptly_mirrors_list.stdout_lines }}"
+    - "item.state == 'present'"
+    - "item.name not in aptly_mirrors_list.stdout_lines"
 
 
 - name: 'CONFIG | MIRRORS | Update mirrors'
@@ -70,5 +70,5 @@
     {{ item.name }}'
   with_items: "{{ aptly_mirrors }}"
   when:
-    - "{{ item.state == 'present' }}"
-    - "{{ item.do_update == True }}"
+    - "item.state == 'present'"
+    - "item.do_update == True"
