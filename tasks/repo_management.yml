@@ -26,7 +26,7 @@
   become: True
   shell: >
     su - {{ aptly_user }} -c 'aptly repo create
-    {{ item.create_flags | join(" ") }}
+    {% if item.create_flags is defined -%} {{ item.create_flags | join(" ") }} {% endif -%}
     {{ item.name }}'
   register: 'aptly_repos_created'
   with_items: "{{ aptly_repos }}"

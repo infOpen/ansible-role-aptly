@@ -52,7 +52,7 @@
   become: True
   shell: >
     su - {{ aptly_user }} -c 'aptly mirror create
-    {{ item.create_flags | join(" ") }}
+    {% if item.create_flags is defined -%} {{ item.create_flags | join(" ") }} {% endif -%}
     {{ item.name }} "{{ item.archive_url }}"
     {{ item.distribution }} {{ item.component1 | join(" ") }}'
   register: 'aptly_mirrors_created'
@@ -66,7 +66,8 @@
   become: True
   shell: >
     su - {{ aptly_user }}
-    -c 'aptly mirror update {{ item.update_flags | join(" ") }}
+    -c 'aptly mirror update
+    {% if item.update_flags is defined -%} {{ item.update_flags | join(" ") }} {% endif -%}
     {{ item.name }}'
   with_items: "{{ aptly_mirrors }}"
   when:
