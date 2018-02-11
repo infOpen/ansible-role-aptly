@@ -1,0 +1,76 @@
+---
+
+dependency:
+  name: 'galaxy'
+driver:
+  name: 'docker'
+lint:
+  name: 'yamllint'
+platforms:
+  - name: "aptly-docker-jessie"
+    image: 'minimum2scp/systemd-jessie:latest'
+    command: '/sbin/init'
+    cap_add:
+      - 'SYS_PTRACE'
+    privileged: True
+  - name: "aptly-docker-xenial"
+    image: 'solita/ubuntu-systemd:16.04'
+    command: '/sbin/init'
+    cap_add:
+      - 'SYS_PTRACE'
+    privileged: True
+  - name: "aptly-docker-trusty"
+    image: 'ubuntu:trusty'
+    cap_add:
+      - 'SYS_PTRACE'
+    privileged: True
+provisioner:
+  name: 'ansible'
+  lint:
+    name: 'ansible-lint'
+  options:
+    skip-tags: 'role::aptly::custom-gpg'
+  inventory:
+    group_vars:
+      all:
+        aptly_packages:
+          - 'aptly=1.2.0'
+          - 'debian-keyring'
+        aptly_architectures:
+          - 'amd64'
+        aptly_mirrors:
+          - name: 'mariadb_10.0'
+            archive_url: 'http://mariadb.mirrors.ovh.net/MariaDB/repo/10.0/ubuntu'
+            distribution: 'trusty'
+            do_update: False
+            component1:
+              - 'main'
+            create_flags:
+              - '-keyring="maria_10_trusty_main.gpg"'
+              - '-keyring="{{ aptly_system_archive_gpg_keys_keyring }}"'
+            update_flags:
+              - '-keyring="maria_10_trusty_main.gpg"'
+              - '-keyring="{{ aptly_system_archive_gpg_keys_keyring }}"'
+            gpg:
+              key: '1BB943DB'
+              server: 'keyserver.ubuntu.com'
+              keyring: 'maria_10_trusty_main.gpg'
+            state: 'present'
+        aptly_repos:
+          - name: 'testing'
+            create_flags:
+              - '-comment="Testing packages"'
+              - '-component="main"'
+              - '-distribution="trusty"'
+            state: 'present'
+    host_vars: {}
+scenario:
+  name: 'default'
+verifier:
+  name: 'testinfra'
+  additional_files_or_dirs:
+    - '../../tests'
+  lint:
+    name: 'flake8'
+  options:
+    sudo: True

@@ -20,7 +20,7 @@
 
 
 - name: 'INSTALL | GROUP | Ensure aptly group'
-  become : True
+  become: True
   group:
     name: "{{ aptly_group }}"
     gid: "{{ aptly_gid | default(omit) }}"

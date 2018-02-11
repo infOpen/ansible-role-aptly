@@ -1,6 +1,6 @@
 ---
 
-# Travis file for aptly role
+# Travis configuration
 
 dist: 'trusty'
 sudo: 'required'
@@ -10,15 +10,17 @@ services:
 
 language: 'python'
 
-before_install:
-  - 'sudo apt-get update -qq'
-  - 'sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine'
+env:
+  matrix:
+    - TOXENV='py27-ansible22'
+    - TOXENV='py27-ansible23'
+    - TOXENV='py27-ansible24'
 
-script:
+install:
   - 'pip install tox-travis'
 
 script:
-  - 'tox'
+  - 'tox -e "${TOXENV}"'
 
 notifications:
   webhooks: 'https://galaxy.ansible.com/api/v1/notifications/'

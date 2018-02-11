@@ -1,6 +1,13 @@
 ---
 
-# Main tasks file for aptly
+# Main tasks file for aptly role
+
+- name: 'INIT | Manage variables to use for our target'
+  include: "{{ role_path }}/tasks/manage_variables.yml"
+  tags:
+    - 'role::aptly'
+    - 'role::aptly::init'
+
 
 - name: 'INSTALL | Include installation tasks'
   include: "{{ role_path }}/tasks/installation.yml"

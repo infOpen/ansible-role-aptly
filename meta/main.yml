@@ -2,15 +2,16 @@
 
 galaxy_info:
   author: 'Alexandre Chaussier'
-  description: 'Install and manage aptly'
-  company: 'Infopen (http://www.infopen.pro)'
+  description: 'Ansible role to install and configure Aptly'
+  company: 'Infopen (http://infopen.pro)'
   license: 'MIT'
-  min_ansible_version: '2.0'
+  min_ansible_version: '2.2'
   github_branch: 'master'
   platforms:
     - name: 'Ubuntu'
       versions:
         - 'trusty'
+        - 'xenial'
   galaxy_tags:
     - 'networking'
     - 'system'

@@ -2,18 +2,21 @@
 Role tests
 """
 
+import os
 import pytest
+
 from testinfra.utils.ansible_runner import AnsibleRunner
 
-testinfra_hosts = AnsibleRunner('.molecule/ansible_inventory').get_hosts('all')
+testinfra_hosts = AnsibleRunner(
+    os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
 
-def test_aptly_user(User):
+def test_aptly_user(host):
     """
     Tests Aptly user
     """
 
-    user = User('aptly')
+    user = host.user('aptly')
 
     assert user.exists
     assert user.group == 'aptly'
@@ -21,12 +24,12 @@ def test_aptly_user(User):
     assert user.shell == '/bin/bash'
 
 
-def test_aptly_user_home(File):
+def test_aptly_user_home(host):
     """
     Tests Aptly user home properties
     """
 
-    home_dir = File('/var/lib/aptly')
+    home_dir = host.file('/var/lib/aptly')
 
     assert home_dir.exists
     assert home_dir.is_directory
@@ -35,12 +38,12 @@ def test_aptly_user_home(File):
     assert home_dir.group == 'aptly'
 
 
-def test_aptly_configuration_file(File):
+def test_aptly_configuration_file(host):
     """
     Tests Aptly configuration
     """
 
-    config_file = File('/var/lib/aptly/.aptly.conf')
+    config_file = host.file('/var/lib/aptly/.aptly.conf')
 
     assert config_file.exists
     assert config_file.is_file
@@ -49,17 +52,17 @@ def test_aptly_configuration_file(File):
     assert config_file.group == 'aptly'
 
 
-def test_repository_file(SystemInfo, File):
+def test_repository_file(host):
     """
     Test community repository file permissions
     """
 
     repo_file_name = ''
 
-    if SystemInfo.distribution in ['debian', 'ubuntu']:
+    if host.system_info.distribution in ['debian', 'ubuntu']:
         repo_file_name = '/etc/apt/sources.list.d/repo_aptly_info.list'
 
-    repo_file = File(repo_file_name)
+    repo_file = host.file(repo_file_name)
 
     assert repo_file.exists
     assert repo_file.is_file
@@ -68,45 +71,43 @@ def test_repository_file(SystemInfo, File):
     assert repo_file.mode == 0o644
 
 
-def test_debian_family_repository_file_content(SystemInfo, File):
+def test_debian_family_repository_file_content(host):
     """
     Test repository file content on Debian family
     """
 
-    if SystemInfo.distribution not in ['debian', 'ubuntu']:
-        pytest.skip('Not apply to %s' % SystemInfo.distribution)
+    if host.system_info.distribution not in ['debian', 'ubuntu']:
+        pytest.skip('Not apply to %s' % host.system_info.distribution)
 
-    repo_file = File('/etc/apt/sources.list.d/repo_aptly_info.list')
+    repo_file = host.file('/etc/apt/sources.list.d/repo_aptly_info.list')
 
     assert repo_file.contains('deb http://repo.aptly.info/ squeeze main')
 
 
-def test_packages(Package):
+def test_packages(host):
     """
     Test Aptly packages are installed
     """
 
-    package = Package('aptly')
+    package = host.package('aptly')
 
     assert package.is_installed
-    assert '0.9.7' in package.version
+    assert '1.2.0' in package.version
 
 
-def test_aptly_mirror_management(Command):
+def test_aptly_mirror_management(host):
     """
     Test if mirrors managed in test playbook are ok
     """
 
-    command = Command('sudo -H -u aptly aptly mirror list -raw')
+    assert 'mariadb_10.0' in host.check_output(
+        'sudo -H -u aptly aptly mirror list -raw')
 
-    assert 'mariadb_10.0' in command.stdout
 
-
-def test_aptly_repo_management(Command):
+def test_aptly_repo_management(host):
     """
     Test if repos managed in test playbook are ok
     """
 
-    command = Command('sudo -H -u aptly aptly repo list -raw')
-
-    assert 'testing' in command.stdout
+    assert 'testing' in host.check_output(
+        'sudo -H -u aptly aptly repo list -raw')
