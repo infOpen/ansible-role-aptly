@@ -112,10 +112,10 @@ Mirror definition example:
   component1:
     - 'main'
   create_flags:
-    - 'filter="nginx"'
-    - 'keyring="foo.bar.gpg"'
+    - '-filter="nginx"'
+    - '-keyring="foo.bar.gpg"'
   update_flags:
-    - 'keyring="foo.bar.gpg"'
+    - '-keyring="foo.bar.gpg"'
   gpg:
     key: 'fdsfqdsfqsfd'
     server: 'server-keys.org'
